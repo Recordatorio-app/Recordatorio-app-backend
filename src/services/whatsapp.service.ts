@@ -3,9 +3,9 @@ import axios from "axios";
 const TOKEN = process.env.WHATSAPP_ACCESS_TOKEN!;
 const PHONE_ID = process.env.WHATSAPP_PHONE_NUMBER_ID!;
 
-export async function sendWhatsappTemplate(to: string, templateName: string, lang: string) {
+export async function sendWhatsappTemplate(to: string, templateName: string, lang: string,components:any) {
   try {
-    const url = `https://graph.facebook.com/v16.0/${PHONE_ID}/messages`;
+    const url = `https://graph.facebook.com/v22.0/${PHONE_ID}/messages`;
 
     const body = {
       messaging_product: "whatsapp",
@@ -15,7 +15,13 @@ export async function sendWhatsappTemplate(to: string, templateName: string, lan
         name: templateName,
         language: {
           code: lang
-        }
+        },
+        components:[
+          {
+            type:"body",
+            parameters: components
+          }
+        ]
       }
     };
 
