@@ -24,7 +24,16 @@ export const register = async (req: Request, res: Response) => {
     res.status(500).json({ error: (err as any).message });
   }
 };
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) return res.status(404).json({ msg: "Usuario no encontrado" });
 
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ error: (err as any).message });
+  }
+};
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
