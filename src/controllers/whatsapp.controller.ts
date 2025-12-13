@@ -8,9 +8,15 @@ export const testWhatsApp = async (req: Request, res: Response) => {
     if (!to) {
       return res.status(400).json({ msg: "El campo 'to' es requerido" });
     }
-
+    const data =[
+      {type:"text",text:"Bienvenido a ToDoApp!"},
+      {type:"text",text:"Mensaje de prueba usando plantillas"},
+      {type:"text",text:"15/12/2025"},
+      {type:"text",text:"Hola mi bb"},
+      {type:"text",text:"PENDIENTE"},
+    ]
     // Prueba usando plantilla hello_world
-    const result = await sendWhatsappTemplate(to, "hello_world", "en_US");
+    const result = await sendWhatsappTemplate(to, "message_simple", "es_PE",data);
 
     return res.json({
       ok: true,
