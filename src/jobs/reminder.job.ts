@@ -52,10 +52,10 @@ export function startReminders() {
             user.phone,
             "message_simple",
             "es_PE",[
-              { type: "text", text: "Hola! "+user.name },
-              { type: "text", text: `Recordatorio de tarea pendiente:` },
-              { type: "text", text: due.toLocaleDateString("es-PE") },
+              { type: "text", text: "Hola " + user.name + "!" },
               { type: "text", text: task.title },
+              { type: "text", text: due.toLocaleDateString("es-PE") },
+              { type: "text", text: task.description },
               { type: "text", text: task.status.toUpperCase() },
             ]
           );
