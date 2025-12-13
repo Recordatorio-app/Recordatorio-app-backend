@@ -48,6 +48,13 @@ const tasks = [
     reminderDate: new Date("2025-12-16T08:00:00.000Z"),
     colorKey: "importante",
   },
+  {
+    title: "PRUEBA CRON WHATSAPP",
+    description: "Esta tarea es solo para probar envío cada X tiempo.",
+    status: "pendiente",
+    reminderDate: new Date(Date.now() + 1 * 60 * 1000), // +1 minuto
+    colorKey: "urgente",
+  },
 ];
 
 const users = [
