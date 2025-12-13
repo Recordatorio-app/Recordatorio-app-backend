@@ -50,8 +50,14 @@ export function startReminders() {
 
           const sendResult = await sendWhatsappTemplate(
             user.phone,
-            "hello_world",
-            "en_US"
+            "message_simple",
+            "es_PE",[
+              { type: "text", text: "Hola! "+user.name },
+              { type: "text", text: `Recordatorio de tarea pendiente:` },
+              { type: "text", text: due.toLocaleDateString("es-PE") },
+              { type: "text", text: task.title },
+              { type: "text", text: task.status.toUpperCase() },
+            ]
           );
 
           if (sendResult) {
