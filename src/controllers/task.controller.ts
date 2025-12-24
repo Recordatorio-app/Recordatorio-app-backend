@@ -7,12 +7,35 @@ import { AuthRequest } from "../middleware/auth";
 export const getTasks = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
-    const tasks = await Task.find({ userId: userId }).sort({ createdAt: -1 });
-    res.json(tasks);
+
+    // query params
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // total de registros
+    const total = await Task.countDocuments({ userId });
+
+    // tareas paginadas
+    const tasks = await Task.find({ userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      data: tasks,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: (err as any).message });
   }
 };
+
 export const getTaskById = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
