@@ -39,7 +39,7 @@ export function startReminders() {
           "message_simple",
           "es_PE",
           [
-            { type: "text", text: `Hola ${user.name}! 👋` },
+            { type: "text", text: `${user.name}! 👋` },
             { type: "text", text: task.title },
             {
               type: "text",
