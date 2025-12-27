@@ -7,17 +7,23 @@ import { AuthRequest } from "../middleware/auth";
 export const getTasks = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).userId;
+
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 4;
+    const status = req.query.status as "pendiente" | "realizada" | undefined;
+
     const skip = (page - 1) * limit;
 
-    const [tasks, total, pendientes, realizadas] = await Promise.all([
-      Task.find({ userId })
+    const filter: any = { userId };
+    if (status) filter.status = status;
+
+    const [tasks, totalFiltered, pendientes, realizadas] = await Promise.all([
+      Task.find(filter)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
 
-      Task.countDocuments({ userId }),
+      Task.countDocuments(filter),
 
       Task.countDocuments({ userId, status: "pendiente" }),
       Task.countDocuments({ userId, status: "realizada" }),
@@ -28,8 +34,8 @@ export const getTasks = async (req: Request, res: Response) => {
       pagination: {
         page,
         limit,
-        totalItems: total,
-        totalPages: Math.ceil(total / limit),
+        totalItems: totalFiltered,
+        totalPages: Math.ceil(totalFiltered / limit),
       },
       stats: {
         pendientes,
