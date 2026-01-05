@@ -10,6 +10,8 @@ export function startReminders() {
   cron.schedule(
     "*/10 * * * *", // cron liviano
     async () => {
+    console.log("🔔 Cron WhatsApp ejecutándose");
+
       const now = new Date();
 
       const tasks = await Task.find({
