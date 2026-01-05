@@ -92,3 +92,6 @@ vite.config.ts.timestamp-*
 
 # Output of 'npm pack'
 *.tgz
+
+#Firebase
+firebase-admin.json
