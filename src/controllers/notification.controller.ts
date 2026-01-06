@@ -1,10 +1,9 @@
 // controllers/notification.controller.ts
-import {  Response } from "express";
+import { Response } from "express";
 import { saveToken } from "../services/notification.service";
 import NotificationToken from "../models/NotificationToken";
 import { sendPush } from "../services/notification.service";
 import { AuthRequest } from "../middleware/auth";
-
 
 export const registerToken = async (req: AuthRequest, res: Response) => {
   try {
@@ -26,14 +25,19 @@ export const registerToken = async (req: AuthRequest, res: Response) => {
 };
 
 export const sendNotification = async (req: AuthRequest, res: Response) => {
-    if (!req.userId) {
+  if (!req.userId) {
     return res.status(401).json({ message: "No autorizado" });
   }
-  const { title, body } = req.body;
+  try {
+      const { title, body } = req.body;
   const userId = req.userId;
   const tokens = await NotificationToken.find({ userId });
 
   await Promise.all(tokens.map((t) => sendPush(t.token, title, body)));
 
-  res.json({ message: "Notificación enviada" });
+  res.status(200).json({ message: "Notificación enviada exitosamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Error enviando notificación" });
+  }
+
 };
