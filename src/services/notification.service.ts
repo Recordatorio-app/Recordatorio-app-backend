@@ -9,16 +9,21 @@ export const saveToken = async (userId: string, token: string) => {
 };
 
 export const sendPush = async (token: string, title: string, body: string) => {
-  return await messaging.send({
-    token,
-    notification: {
-      title,
-      body,
-    },
-    webpush:{
-      notification:{
+  try {
+    await messaging.send({
+      token,
+      data: {
+        title,
+        body,
         tag: Date.now().toString(),
-      }
+      },
+    });
+  } catch (error: any) {
+    if (error.code === "messaging/registration-token-not-registered") {
+      console.log("🔥 Token inválido, eliminando:", token);
+      await NotificationToken.deleteOne({ token });
+    } else {
+      throw error;
     }
-  });
+  }
 };
