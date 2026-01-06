@@ -15,6 +15,7 @@ export const sendPush = async (token: string, title: string, body: string) => {
       data: {
         title,
         body,
+        url: "http://localhost:3000/",
         tag: Date.now().toString(),
       },
     });
