@@ -8,15 +8,17 @@ import userRoutes from "./routes/user.routes";
 import taskRoutes from "./routes/task.routes";
 import notificationRoutes from "./routes/notification.routes";
 import whatsappRoutes from "./routes/whastapp.routes";
-import {startReminders} from"./jobs/reminder.job";
-import {startPushNotifications} from "./jobs/push.job";
-
+import { startReminders } from "./jobs/reminder.job";
+import { startPushNotifications } from "./jobs/push.job";
 
 const app = express();
-app.use(cors({
+app.use(
+  cors({
     origin: ["http://localhost:3000", "https://recordatorio-app.vercel.app/"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-}));
+  })
+);
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
