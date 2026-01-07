@@ -43,51 +43,6 @@ El backend está desarrollado con **Node.js y Express**, diseñado para ser esca
 ## 📚 Documentación de la API
 
 La documentación Swagger está disponible en:
-# Recordatorio App – Backend
-
-API REST para la gestión de tareas y recordatorios con notificaciones automáticas por WhatsApp y Push Notifications.
-
----
-
-## 📌 Descripción
-
-**Recordatorio App** es una plataforma que permite a los usuarios gestionar actividades y recibir recordatorios automáticos antes de su vencimiento.
-
-El sistema envía alertas **3 días antes** mediante **WhatsApp (Meta Developers API)** y notificaciones **Push** usando **Firebase Cloud Messaging**.
-
-El backend está desarrollado con **Node.js y Express**, diseñado para ser escalable, seguro y fácilmente desplegable mediante **Docker**, utilizando **MongoDB** como base de datos.
-
----
-
-## 🛠️ Stack Tecnológico
-
-- **Node.js 20**
-- **Express.js**
-- **MongoDB + Mongoose**
-- **JWT Authentication**
-- **WhatsApp Cloud API (Meta Developers)**
-- **Firebase Cloud Messaging (Push Notifications)**
-- **Swagger / OpenAPI 3.0**
-- **Docker & Docker Compose**
-
----
-
-## 🚀 Funcionalidades Principales
-
-- Autenticación de usuarios con JWT
-- Gestión completa de tareas (CRUD)
-- Filtros por estado (Pendiente / Completada)
-- Recordatorios automáticos 3 días antes del vencimiento
-- Envío de notificaciones por WhatsApp usando plantillas aprobadas
-- Notificaciones Push en tiempo real con Firebase
-- Paleta de colores personalizada por usuario
-- Documentación de la API con Swagger
-
----
-
-## 📚 Documentación de la API
-
-La documentación Swagger está disponible en:
 http://localhost:4000/api/docs
 
 
