@@ -4,40 +4,45 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { COLOR_KEYS } from "../utils/defaultPalette";
 
-export const register = async (req: Request, res: Response) => {
-  try {
-    const { name, email, password, phone } = req.body;
-    if (!name || !email || !password)
-      return res.status(400).json({ msg: "Faltan campos" });
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: Gestión y autenticación de usuarios
+ */
 
-    const exists = await User.findOne({ email });
-    if (exists) return res.status(400).json({ msg: "Usuario ya existe" });
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Login de usuario
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@email.com
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: Login exitoso
+ *       400:
+ *         description: Credenciales inválidas
+ *       404:
+ *         description: Usuario no encontrado
+ */
 
-    const hashed = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashed, phone });
-    
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
-      expiresIn: "7d",
-    });
-    res.json({
-      ok: true,
-      token,
-      user: { id: user._id, name: user.name, email: user.email },
-    });
-  } catch (err) {
-    res.status(500).json({ error: (err as any).message });
-  }
-};
-export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const user = await User.findById(req.params.id).select("-password");
-    if (!user) return res.status(404).json({ msg: "Usuario no encontrado" });
-
-    res.json({ user });
-  } catch (err) {
-    res.status(500).json({ error: (err as any).message });
-  }
-};
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -59,11 +64,155 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ error: (err as any).message });
   }
 };
+/**
+ * @swagger
+ * /api/users/register:
+ *   post:
+ *     summary: Registrar nuevo usuario
+ *     description: Crea un nuevo usuario y devuelve un JWT automáticamente.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Juan Pérez
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: juan@email.com
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *               phone:
+ *                 type: string
+ *                 example: "+51987654321"
+ *     responses:
+ *       200:
+ *         description: Usuario registrado correctamente
+ *       400:
+ *         description: Usuario ya existe o faltan campos
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+export const register = async (req: Request, res: Response) => {
+  try {
+    const { name, email, password, phone } = req.body;
+    if (!name || !email || !password)
+      return res.status(400).json({ msg: "Faltan campos" });
+
+    const exists = await User.findOne({ email });
+    if (exists) return res.status(400).json({ msg: "Usuario ya existe" });
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, password: hashed, phone });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+      expiresIn: "7d",
+    });
+    res.json({
+      ok: true,
+      token,
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as any).message });
+  }
+};
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     summary: Obtener usuario por ID
+ *     description: Devuelve la información del usuario sin la contraseña.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Usuario encontrado
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+export const getUserById = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password");
+    if (!user) return res.status(404).json({ msg: "Usuario no encontrado" });
+
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ error: (err as any).message });
+  }
+};
 
 /**
- * Update only colors for fixed keys.
- * Body should be an object with some of the color keys and hex strings.
+ * @swagger
+ * /api/users/{id}/colors:
+ *   put:
+ *     summary: Actualizar paleta de colores del usuario
+ *     description: >
+ *       Actualiza solo los colores permitidos (máximo 6).
+ *       El usuario debe ser el propietario del recurso.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             example:
+ *               urgente: "#FF0000"
+ *               normal: "#00FF00"
+ *     responses:
+ *       200:
+ *         description: Paleta actualizada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 ok:
+ *                   type: boolean
+ *                 palette:
+ *                   type: object
+ *       400:
+ *         description: Claves o colores inválidos
+ *       403:
+ *         description: No autorizado
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error interno del servidor
  */
+
 export const updateColors = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
@@ -107,6 +256,36 @@ export const updateColors = async (req: Request, res: Response) => {
     res.status(500).json({ error: (err as any).message });
   }
 };
+/**
+ * @swagger
+ * /api/users/{id}/palette:
+ *   get:
+ *     summary: Obtener paleta de colores del usuario
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Paleta obtenida correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 palette:
+ *                   type: object
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
 
 export const getPalette = async (req: Request, res: Response) => {
   try {
