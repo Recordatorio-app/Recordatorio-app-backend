@@ -14,7 +14,7 @@ import {startPushNotifications} from "./jobs/push.job";
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "https://recordatorio-app.vercel.app/"],
     credentials: true,
 }));
 app.use(express.json());
