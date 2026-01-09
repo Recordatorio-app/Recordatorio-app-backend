@@ -31,6 +31,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/whatsapp", whatsappRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/health", notificationRoutes);
 startReminders();
 startPushNotifications();
 connectDB();

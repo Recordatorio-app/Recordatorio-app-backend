@@ -7,7 +7,6 @@ const router = Router();
 router.post("/register", register);
 router.post("/login", login);
 router.get("/:id", auth, getUserById);
-// palette routes (protected - user must be owner)
 router.get("/:id/palette", auth, getPalette);
 router.put("/:id/palette", auth, updateColors);
 

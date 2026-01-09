@@ -140,3 +140,7 @@ export const sendNotification = async (req: AuthRequest, res: Response) => {
   }
 
 };
+
+export const helpNotification = async (req: AuthRequest, res: Response) => {
+  res.status(200).send("OK");
+}
